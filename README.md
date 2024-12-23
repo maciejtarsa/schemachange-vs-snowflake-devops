@@ -1,0 +1,1 @@
+# schemachange-vs-snowflake-devops
