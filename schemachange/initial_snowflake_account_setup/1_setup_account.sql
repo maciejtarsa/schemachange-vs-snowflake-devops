@@ -3,6 +3,6 @@
 
 USE ROLE ACCOUNTADMIN;
 
--- migrations database and schema--
+-- admin_db database and schemachange schema--
 CREATE DATABASE IF NOT EXISTS ADMIN_DB;
 CREATE SCHEMA IF NOT EXISTS SCHEMACHANGE;

@@ -13,6 +13,36 @@ They will be applied in that order - versioned first, then repeatable and always
 
 Changes could be deployed automatically using a CI/CD pipeline.
 
+## schemachnage file structure setup
+
+In order to preserve dependency between different types of Snowflake objects, we define the following file naming conventions:
+- 00 - account and environment level settings and test setup
+- 10 - users, roles
+- 20 - databases, schemas, tables
+- 30 - warehouses, resource monitors
+- 80 - removal scripts - version files which contain resources removed from the repo and from Snowflake
+- 99 - tests for existence of resources defined aboves
+
+To avoid code repetitions and numerous `ALTER` statements, we use different types of files for the following purposes:
+ - Repeatable - for defining all Snowflake resources - they will run only if they have been amended
+ - Always - for running tests - we want these to be run at each schemachange deploy
+ - Versioned - dropping resources only - these should be run once only
+
+Tips on working with Repeatable and Always files:
+- resources created with `CREATE OR REPLACE` statements will be deleted and recreated - any relevant grants will be lost and need reapplying
+- resources created with `CREATE IF NOT EXISTS` statements will only be created if they do not exist - no grants will be lost. 
+- it is recommended to follow `CREATE IF NOT EXISTS` with an `ALTER` statement which will allow amending a resource if needed
+- removing a previously created resource from codebase is not enough for it to be removed from Snowflake. For example, a previously granted privilege would need to be explicitly revoked
+- Jinja can be injected into the files. This is useful if we want to create a resource in one of the environments only, e.g.
+```sql
+-- only execute this in STG
+{% if ENV == 'DEV' %}
+    -- SQL logic here
+{% endif %}
+-- avoid schemachange error when file ends with a comment
+SELECT 1;
+```
+
 ## Target Account setup
 
 Minimum manual one-off setup is required in target Snowflake account and for each environment.  
@@ -61,10 +91,18 @@ Your local virtual environment will not be commited to version control - `venv` 
 
 To activate the virtual environment:
 ```bash
-source venv/Scripts/activate
+source venv/bin/activate
+```
+Install requirements
+```bash
+pip3 install -r requirements.txt
+```
+Change permissions of the shell file to be executed
+```bash
+chmod +x run_schemachange.sh
 ```
 
 Then run schemachange using a shell script and passing the required variables
 ```bash
-./run_schemachange.sh <ENV> <SNOFLAKE_ACCOUNT> <PRIVATE_KEY_LOCATION>
+./run_schemachange.sh <ENV> <SNOWFLAKE_ACCOUNT> <PRIVATE_KEY>
 ```
