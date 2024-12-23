@@ -1,0 +1,31 @@
+config-version: 1
+
+# The root folder for the database change scripts
+root-folder: 'migrations'
+
+# The modules folder for jinja macros and templates to be used across multiple scripts.
+modules-folder: null
+
+# The name of the snowflake account (e.g. xy12345.east-us-2.azure).
+snowflake-account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+
+# The name of the snowflake user
+snowflake-user: "{{ env_var('ENV') }}_SCHEMACHANGE_USER"
+
+# The name of the default role to use. Can be overrideen in the change scripts.
+snowflake-role: "FR_{{ env_var('ENV') }}_SCHEMACHANGE"
+
+# The name of the default warehouse to use. Can be overridden in the change scripts.
+snowflake-warehouse: "WH_{{ env_var('ENV') }}_SCHEMACHANGE"
+
+# The name of the default database to use. Can be overridden in the change scripts.
+snowflake-database: ADMIN_DB
+
+# The name of the default schema to use. Can be overridden in the change scripts.
+snowflake-schema: SCHEMACHANGE
+
+# Display verbose debugging details during execution (the default is False)
+verbose: true
+
+# A string to include in the QUERY_TAG that is attached to every SQL statement executed
+query-tag: SCHEMACHANGE
