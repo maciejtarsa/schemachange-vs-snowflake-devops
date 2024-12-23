@@ -16,6 +16,6 @@ CREATE OR REPLACE API INTEGRATION GIT_API_INTEGRATION
 -- Git repository object is similar to external stage
 -- Note this works with public repository only
 -- For private repository, you need to use Snowflake secrets
-CREATE OR REPLACE GIT REPOSITORY ADMIN_DB.DEVOPS.GIT_API_INTEGRATION
+CREATE OR REPLACE GIT REPOSITORY ADMIN_DB.DEVOPS.DEVOPS_REPO
   API_INTEGRATION = git_api_integration
   ORIGIN = '<insert URL of forked GitHub repo>'; -- INSERT URL OF FORKED REPO HERE

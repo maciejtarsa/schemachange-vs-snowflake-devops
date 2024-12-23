@@ -50,4 +50,11 @@ To test the connection, run:
 snow connection test
 ```
 
-
+To execute all current scripts, first fetch the latest chanegs in your git repo into Snowflake
+```bash
+snow git fetch ADMIN_DB.DEVOPS.DEVOPS_REPO
+```
+And to execute all commands:
+```bash
+snow git execute @ADMIN_DB.DEVOPS.DEVOPS_REPO/branches/devops/devops/steps/0[134]_*
+```
