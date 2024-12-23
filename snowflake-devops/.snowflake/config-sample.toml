@@ -1,0 +1,9 @@
+[connections.default]
+warehouse = "WH_DEV_DEVOPS"
+role = "FR_DEV_DEVOPS"
+database = "ADMIN_DB"
+schema = "DEVOPS"
+account = "<INSERT YOUR ACCOUNT IDENTIFIER>"
+user = "DEV_DEVOPS_USER"
+authenticator = "SNOWFLAKE_JWT"
+private_key_path = "rsa_keys/rsa_key.p8"
