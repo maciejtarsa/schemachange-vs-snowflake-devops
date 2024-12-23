@@ -56,6 +56,6 @@ snow git fetch ADMIN_DB.DEVOPS.DEVOPS_REPO
 ```
 And to execute all commands:
 ```bash
-snow git execute "@ADMIN_DB.DEVOPS.DEVOPS_REPO/branches/dev/snowflake-devops/steps/*" -D "ENV='TEST'"
+snow git execute "@ADMIN_DB.DEVOPS.DEVOPS_REPO/branches/main/snowflake-devops/steps/*" -D "ENV='TEST'"
 ```
 We can use `-D` notation to provide parameters to be replaced in any Jinja notation within our SQL or Python code.
