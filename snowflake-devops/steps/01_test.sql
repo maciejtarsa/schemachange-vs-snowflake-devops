@@ -1,4 +1,4 @@
--- only execute this in STG
+-- only execute this in TEST
 {% if ENV == 'TEST' %}
 
 USE ROLE ACCOUNTADMIN;
