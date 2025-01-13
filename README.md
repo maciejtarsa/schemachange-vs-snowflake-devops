@@ -6,7 +6,7 @@ Accompanying blog post included below.
 # Snowflake DevOps - first impressions and comparison with schemachange
 ![](images/devops-flow.png)
 
-## Resource lifecycle management tools
+## Snowflake resource lifecycle management tools
 
 There are a number of options for programmatically managing the lifecycle of Snowflake resources. Terraform has previously been a popular choice - however due to many issues encountered - it is not recommended for teams without a wealth of Terraform and Infrastructure-as-Code (IaC) experience. As an alternative, we have been using schemachange - a tool following an imperative-style approach. It provides a low barrier of entry for teams used to SQL language while offering a good set of functionalites.
 
@@ -16,7 +16,7 @@ Despite the number of tools available, there is a gap in Snowflake’s native ab
 
 There are a number of things we want to be able to achieve with the tool of choice
 - Snowflake securable objects such as roles, users, warehouses, databases and tables should be defined in code
-- It should be possible to deploy these using CI/CD tools - automated deployment
+- It should be possible to deploy these using CI/CD tools (automated deployment)
 - It should be possible to deploy to multiple environments in Snowflake (either logical or physical separation)
 - Ideally some testing should be possible - e.g. test that expected objects were created or that no additional objects of specific type exist in the environment
 
@@ -33,12 +33,14 @@ The tool requires some initial setup in order to be able to run the deployment. 
 - A role for that user to assume
 - A database, schema and table for storage of change history table
 - A warehouse used for executing scripts
+
 Note that schemachange can use existing resources for the above - with the exception of the change history table - but that table can be created in an existing database and schema as well.
 
 There are 3 types of schemachange scripts:
 - Versioned, e.g. `V1.1__name.sql` - applied only once
 - Repeatable, e.g. `R__name.sql` - applied at each run but only if contents of the file have changed - a hash of the contents of the file is kept in the history table
 - Always, e.g. `A__name.sql` - applied at every run
+
 They will be applied in that order - versioned first, then repeatable and always at the end.
 
 As an imperative tool - it is designed to mostly work with versioned files, however in order to use pseudo-declarative style - we opted to define most of our resources using Repeatable scripts with the following constructs:
@@ -51,7 +53,7 @@ ALTER WAREHOUSE WH_{{ ENV }}_DATA_ENG
 SET WAREHOUSE_SIZE = XSMALL
 AUTO_SUSPEND = 60;
 ```
-That way we first create a warehouse only if it doesn’t exist already and specify only the minimum parameters required. Then alter it to provide the parameters we expect to change in the future. If that resource needs changing later (e.g. size of a warehouse) - we just change the alter script - as it’s a repeatable file it will get applied at the next deployment. If we used `CREATE OR REPLACE`, any existing grants (or data if it’s a database, schema, etc.) would get lost.
+That way we first create a warehouse only if it doesn’t exist already and specify only the minimum parameters required. Then alter it to provide the parameters we expect to change in the future. If that resource needs changing later (e.g. size of a warehouse) - we just change the alter script - as it’s a repeatable file it will get applied at the next deployment. If we used `CREATE OR REPLACE`, any existing grants (or data if it’s a database, schema, etc.) would be lost.
 
 We also found uses for the other types of scripts:
 - Always scripts for running tests - we want the tests to run after each deployment run and as the last step -  to confirm we have the resources we expect
@@ -72,7 +74,7 @@ The other key building blocks are:
 
 The initial setup is quite similar to schemachange - you’ll need a user, role, database and schema. You won’t need a table to store the history of scripts run, but you will need an api integration for your git repository instead. Again - you could use existing resources and define your git integration in one of the existing schemas if you choose to.
 
-I like that Devops is declarative - allowing for your resources definition to be concise, idempotent and easy to understand However, we had high hopes for Snowflake managing the state of objects - this is not currently the case - but more on that later.
+Snowflake Devops is declarative - allowing for your resources definition to be concise, idempotent and easy to understand. However, we had high hopes for Snowflake managing the state of objects - this is not currently the case - but more on that later.
 
 Your SQL scripts will generally be very similar to schemachange, e.g. the warehouse declared earlier would be equivalent to:
 ```sql
@@ -122,7 +124,7 @@ If you want to chat about or get help with implementing Snowflake for your data 
 > Header image from [Snowflake](https://docs.snowflake.com/en/developer-guide/builders/devops)
 
 ## Licence
-Copyright 2024 Mechanical Rock
+Copyright 2025 Mechanical Rock
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
