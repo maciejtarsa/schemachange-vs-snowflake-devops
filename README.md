@@ -83,9 +83,7 @@ WITH INITIALLY_SUSPENDED = TRUE
 WAREHOUSE_SIZE = XSMALL
 AUTO_SUSPEND = 60;
 ```
-The seamless integration between Python and SQL is an advantage - you can have your definition in SQL or Python and switch as needed. However we found the ownership of objects surprising - in schemachange it’s the role deploying the changes - with DevOps, even though we were deploying with a custom user and role - `ACCOUNTADMIN` had the ownership of all of the objects created.
-
-You can specify which scripts to run by pattern matching, you can also pass parameters for your Jinja scripts. Unfortunately, it looks like all scripts will always be run - so unless you want to work with some complicated conditions - or develop a setup similar to [SlimCI](https://medium.com/@thiernomadiariou/slim-ci-with-dbt-core-and-snowpark-ffbb80b81fec) - you will likely end up with execution of a lot of files in each deployment.
+The seamless integration between Python and SQL is an advantage - you can have your definition in SQL or Python and switch as needed. You can specify which scripts to run by pattern matching, you can also pass parameters for your Jinja scripts. Unfortunately, it looks like all scripts will always be run - so unless you want to work with some complicated conditions - or develop a setup similar to [SlimCI](https://medium.com/@thiernomadiariou/slim-ci-with-dbt-core-and-snowpark-ffbb80b81fec) - you will likely end up with execution of a lot of files in each deployment.
 
 ![](images/snowflake-devops-output.png)  
 *Figure 2: Sample deployment with Snowflake DevOps - 6 scripts were successfully executed*
@@ -105,7 +103,7 @@ Schemachange is stateless - therefore it doesn’t maintain the state - the user
 Being an imperative tool - any removals of resources have to be explicit in schemachange - you need to include a `DROP` statement. In the past, we used versioned files for this purpose, which worked quite well. Snowflake DevOps is a declarative tool - however as it does not maintain the state - removal has to be explicit as well. Unfortunately - there is no facility to run that operation once only as part of the deployment. You will either end up re-running `DROP IF EXISTS` on every deployment, drop resources outside of version control (please don’t), or have a separate set of deployment scripts for dropping resources. None of these are good options.
 
 ### Bringing in existing resources
-In both tools, you can bring existing resources into source control (add definitions for resources created previously into your code base). This will require transferral of ownership to the role deploying the tool - in order to `CREATE OR ALTER` a resource, the role performing this action needs to own the resource. With DevOps this will currently be `ACCOUNTADMIN`.
+In both tools, you can bring existing resources into source control (add definitions for resources created previously into your code base). This will require transferral of ownership to the role deploying the tool - in order to `CREATE OR ALTER` a resource, the role performing this action needs to own the resource.
 
 ### Separation of environments
 You can use Jinja syntax in both tools - this allows for easy replacement of values in your scripts and you can call it in your pipelines by passing variables - e.g. have a deployment to Development and another to Production using the same scripts. You can also use Jinja to use conditional statements in both tools - e.g. only deploy a resource in a specific environment.
@@ -115,13 +113,16 @@ Neither tool has any native setup for testing. The proposed solution is to have 
 
 ## Takeaways
 
-Overall - we think that Snowflake DevOps is mature enough to provide programmatic resource lifecycle management in Snowflake. As a fairly new tool - it is still missing some of the functionality we would have liked to see - e.g. a way to only run changed resources or for the ownership of the resources to stay with the role creating them instead of `ACCOUNTADMIN`. However Snowflake is likely to be adding a lot of further developments into this area - it’s a space worth watching. 
+Overall - we think that Snowflake DevOps is mature enough to provide programmatic resource lifecycle management in Snowflake. As a fairly new tool - it is still missing some of the functionality we would have liked to see - e.g. a way to only run changed resources. However Snowflake is likely to be adding a lot of further developments into this area - it’s a space worth watching. 
 
 Having said that - if schemachange works well for you - keep using it. It is still a very mature tool with a lot of features and flexibility. There’s also nothing stopping you from using `CREATE OR ALTER` statements in schemachange as well!
 
 If you want to chat about or get help with implementing Snowflake for your data stack, please [reach out](https://www.mechanicalrock.io/lets-get-started)!
 
 > Header image from [Snowflake](https://docs.snowflake.com/en/developer-guide/builders/devops)
+
+#### Corrections
+The initial version of this article included reference to `ACCOUNTADMIN` owning all the resources created by Snowflake DevOps. This is not the case and was a configuration error. The role deploying the resources is the owner.
 
 ## Licence
 Copyright 2025 Mechanical Rock
