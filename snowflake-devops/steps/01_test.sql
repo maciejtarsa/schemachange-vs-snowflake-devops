@@ -1,5 +1,5 @@
--- only execute this in TEST
-{% if ENV == 'TEST' %}
+-- only execute this in DEV
+{% if ENV == 'DEV' %}
 
 USE ROLE ACCOUNTADMIN;
 
