@@ -121,6 +121,9 @@ If you want to chat about or get help with implementing Snowflake for your data 
 
 > Header image from [Snowflake](https://docs.snowflake.com/en/developer-guide/builders/devops)
 
+#### Corrections
+The initial version of this article included reference to `ACCOUNTADMIN` owning all the resources created by Snowflake DevOps. This is not the case and was a configuration error. The role deploying the resources is the owner.
+
 ## Licence
 Copyright 2025 Mechanical Rock
 
