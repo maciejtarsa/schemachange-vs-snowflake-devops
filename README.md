@@ -3,12 +3,15 @@
 Code repository containing samples for deploying Snowflake resources with schemachange and with Snowflake DevOps.
 Accompanying blog post included below.
 
+Article first published on [Mechanical Rock website](https://www.mechanicalrock.io/blog/snowflake-devops-first-impressions-and-comparison-with-schemachange)  
+Another version was also published on [Medium](https://maciejtarsa.medium.com/snowflake-devops-first-impressions-and-comparison-with-schemachange-30481715a60e)
+
 # Snowflake DevOps - first impressions and comparison with schemachange
 ![](images/devops-flow.png)
 
 ## Snowflake resource lifecycle management tools
 
-There are a number of options for programmatically managing the lifecycle of Snowflake resources. Terraform has previously been a popular choice - however due to many issues encountered - it is not recommended for teams without a wealth of Terraform and Infrastructure-as-Code (IaC) experience. As an alternative, we have been using schemachange - a tool following an imperative-style approach. It provides a low barrier of entry for teams used to SQL language while offering a good set of functionalites.
+There are a number of options for programmatically managing the lifecycle of Snowflake resources. Terraform has previously been a popular choice - however due to many issues encountered - it is not recommended for teams without a wealth of Terraform and Infrastructure-as-Code (IaC) experience. As an alternative, we have been using schemachange - a tool following an imperative-style approach. It provides a low barrier of entry for teams used to SQL language while offering a good set of functionalities.
 
 Despite the number of tools available, there is a gap in Snowflake’s native ability to provide object lifecycle management. Snowflake has been working on filling this gap and the recent introduction of [Snowflake DevOps may sufficiently fill that space](https://www.snowflake.com/en/blog/devops-snowflake-accelerating-development-productivity/). The goal of this post is to evaluate whether Snowflake DevOps is ready to replace schemachange as an object management tool.
 
@@ -83,7 +86,7 @@ WITH INITIALLY_SUSPENDED = TRUE
 WAREHOUSE_SIZE = XSMALL
 AUTO_SUSPEND = 60;
 ```
-The seamless integration between Python and SQL is an advantage - you can have your definition in SQL or Python and switch as needed. You can specify which scripts to run by pattern matching, you can also pass parameters for your Jinja scripts. Unfortunately, it looks like all scripts will always be run - so unless you want to work with some complicated conditions - or develop a setup similar to [SlimCI](https://medium.com/@thiernomadiariou/slim-ci-with-dbt-core-and-snowpark-ffbb80b81fec) - you will likely end up with execution of a lot of files in each deployment.
+The seamless integration between Python and SQL is an advantage - you can have your definition in SQL or Python and switch as needed. You can pass parameters for your Jinja scripts, you can also specify which scripts to run by pattern matching. Unfortunately, it looks like all scripts will always be run, whether there are any changes or not. However you can use git diff to get the changed files only and to specify that only those should be run.
 
 ![](images/snowflake-devops-output.png)  
 *Figure 2: Sample deployment with Snowflake DevOps - 6 scripts were successfully executed*
@@ -97,7 +100,7 @@ Having performed a minimal setup of Snowflake infrastructure using both tools, w
 Initial setup is very similar - both tools need a user, role, database, schema and warehouse. Schemachange also needs a table to store the history of deployments (1 per environment), while DevOps needs a git integration to connect to the repository where the code is stored. One potential issue with schemachange’s table is that it could become quite big fairly quickly - as many deployments are run, the number of records could grow quite quickly - that table may eventually need some optimisation.
 
 ### Maintaining state
-Schemachange is stateless - therefore it doesn’t maintain the state - the user needs to manage this. However, it does allow for skipping files with no changes made (with use of Repeatable files). This can be very useful if only small changes are made - a bit like Terraform only amending resources which are altered. Snowflake DevOps doesn’t maintain the state either and as far as we could find, there was no easy way to only run scripts for changed resources. There might be a way to create a SlimCI-like set-up - but that would create additional overhead.
+Schemachange is stateless - therefore it doesn’t maintain the state - the user needs to manage this. However, it does allow for skipping files with no changes made (with use of Repeatable files). This can be very useful if only small changes are made - a bit like Terraform only amending resources which are altered. Snowflake DevOps doesn’t maintain the state either and as far as we could find, there was no easy way to only run scripts for changed resources. Using git diff is an option - but creates another overhead.
 
 ### Removal of resources
 Being an imperative tool - any removals of resources have to be explicit in schemachange - you need to include a `DROP` statement. In the past, we used versioned files for this purpose, which worked quite well. Snowflake DevOps is a declarative tool - however as it does not maintain the state - removal has to be explicit as well. Unfortunately - there is no facility to run that operation once only as part of the deployment. You will either end up re-running `DROP IF EXISTS` on every deployment, drop resources outside of version control (please don’t), or have a separate set of deployment scripts for dropping resources. None of these are good options.
