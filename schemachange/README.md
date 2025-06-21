@@ -49,12 +49,12 @@ Minimum manual one-off setup is required in target Snowflake account and for eac
 It creates `<ENV>_SCHEMACHANGE_USER` which will be used for deployment into Snowflake. For best practice, key-pair is used for authentication instead of a password.  
 [Snowflake documentation on key-pair authentication](https://docs.snowflake.com/en/user-guide/key-pair-auth)
 
-For account level setup, run the following script:
-`./initial_snowflake_account_setup/setup_account.sql`
+For account level setup, run the following script:  
+`./initial_snowflake_account_setup/setup_account.sql`  
 This script will:
 - create database and schema for schemachange
 
-or each environment, run the following script:  
+For each environment, run the following script:   
 `./initial_snowflake_account_setup/setup_environment.sql`  
 Replace `<TARGET_ENV>` and `<PUBLIC_KEY>` with the corresponding target environment and public key.
 This script will:

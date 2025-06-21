@@ -1,5 +1,5 @@
 # Snowflake DevOps
-A repository for getting started with SNowflake DevOps
+A repository for getting started with Snowflake DevOps
 
 ## Getting started
 
@@ -10,17 +10,17 @@ It creates `<ENV>_DEVOPS_USER` which will be used for deployment into Snowflake.
 [Snowflake documentation on key-pair authentication](https://docs.snowflake.com/en/user-guide/key-pair-auth)
 
 For account level setup, run the following script:
-`./initial_snowflake_account_setup/setup_account.sql`
+`./initial_snowflake_account_setup/setup_account.sql`  
 This script will:
 - create database and schema for devops
 
-or each environment, run the following script:  
+For each environment, run the following script:  
 `./initial_snowflake_account_setup/setup_environment.sql`  
-Replace `<TARGET_ENV>` and `<PUBLIC_KEY>` with the corresponding target environment and public key.
+Replace `<TARGET_ENV>` and `<PUBLIC_KEY>` with the corresponding target environment and public key.  
 This script will:
 - Create a user and role for devops
 
-Additionally, scripts for key rotation can be found in:
+Additionally, scripts for key rotation can be found in 
 `./initial_snowflake_account_setup/key_rotation.sql`  
 This script can be used for rotating RSA keys for service users.
 
@@ -41,9 +41,10 @@ These keys should never be commited into version control. They are saved locally
 
 ### Snowflake CLI
 
-Snowflake CLI is required for interacting with Snowflake - it can be downloaded from: [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation#label-snowcli-install-macos-installer)
+Snowflake CLI is required for interacting with Snowflake - it can be downloaded from [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation#label-snowcli-install-macos-installer)
 
-A Snowflake configuration file will be required [instructions](https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-cli), sample file located in `.snowflake/config-sample.toml`
+A Snowflake configuration file will be required - [instructions](https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-cli).  
+Sample file located in `.snowflake/config-sample.toml`
 
 To test the connection, run:
 ```bash
@@ -54,7 +55,7 @@ To execute all current scripts, first fetch the latest chanegs in your git repo 
 ```bash
 snow git fetch ADMIN_DB.DEVOPS.DEVOPS_REPO
 ```
-And to execute all commands:
+And to execute all commands
 ```bash
 snow git execute "@ADMIN_DB.DEVOPS.DEVOPS_REPO/branches/main/snowflake-devops/steps/02_*" -D "ENV='DEV'"
 ```
